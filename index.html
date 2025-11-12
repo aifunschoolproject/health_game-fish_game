@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8">
+    <title>小魚遊戲</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: black;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Canvas 容器 */
+        #unity-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* Canvas + Footer垂直排列 */
+        }
+
+        /* Canvas 維持比例，依螢幕高度縮放 */
+        #unity-canvas {
+            height: 100vh;
+            width: auto;
+            aspect-ratio: 1170 / 2532;
+            display: block;
+            background-color: black;
+        }
+
+        /* Footer 放在 Canvas 下方 */
+        #unity-footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            color: white;
+            font-family: sans-serif;
+            pointer-events: none;
+        }
+
+        #unity-build-title,
+        #unity-logo-title-footer,
+        #unity-fullscreen-button {
+            pointer-events: auto;
+            margin: 0 5px;
+        }
+
+        /* Loading bar 浮在 Canvas 中心 */
+        #unity-loading-bar {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            font-family: sans-serif;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="unity-container">
+        <canvas id="unity-canvas" width="1170" height="2532" tabindex="-1"></canvas>
+
+        <!-- Loading Bar 浮在 Canvas 上方 -->
+        <div id="unity-loading-bar">
+            載入中...
+            <div id="unity-progress-bar-empty" style="width:300px; height:5px; background:#444;">
+                <div id="unity-progress-bar-full" style="width:0%;background:white;height:5px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+		var canvas = document.querySelector("#unity-canvas");
+
+		function unityShowBanner(msg, type) {
+			console.log(msg);
+		}
+
+		var buildUrl = "./Build";
+		var loaderUrl = buildUrl + "/Health_FishGame.loader.js";
+
+		var config = {
+			dataUrl: buildUrl + "/Health_FishGame.data",
+			frameworkUrl: buildUrl + "/Health_FishGame.framework.js",
+			codeUrl: buildUrl + "/Health_FishGame.wasm",
+			streamingAssetsUrl: "StreamingAssets",
+			companyName: "DefaultCompany",
+			productName: "Health_FishGame",
+			productVersion: "1.0",
+			showBanner: unityShowBanner,
+		};
+
+		document.querySelector("#unity-loading-bar").style.display = "block";
+
+		var script = document.createElement("script");
+		script.src = loaderUrl;
+		script.onload = () => {
+			createUnityInstance(canvas, config, (progress) => {
+				document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+			}).then((unityInstance) => {
+				document.querySelector("#unity-loading-bar").style.display = "none";
+
+				// ✅ 加上這段保護
+				var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+				if (fullscreenButton) {
+					fullscreenButton.onclick = () => {
+						unityInstance.SetFullscreen(1);
+					};
+				}
+			}).catch((message) => {
+				alert(message);
+			});
+		};
+		document.body.appendChild(script);
+	</script>
+</body>
+</html>
