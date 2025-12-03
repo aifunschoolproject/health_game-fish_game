@@ -26,11 +26,11 @@
 
         /* Canvas 維持比例，依螢幕高度縮放 */
         #unity-canvas {
-            height: 100vh;
-            width: auto;
-            aspect-ratio: 1170 / 2532;
-            display: block;
-            background-color: black;
+            width: 100vw;
+			height: auto;
+			aspect-ratio: 2532 / 1170;
+			display: block;
+			background-color: black;
         }
 
         /* Footer 放在 Canvas 下方 */
@@ -67,7 +67,7 @@
 
 <body>
     <div id="unity-container">
-        <canvas id="unity-canvas" width="1170" height="2532" tabindex="-1"></canvas>
+        <canvas id="unity-canvas" width="2532" height="1170" tabindex="-1"></canvas>
 
         <!-- Loading Bar 浮在 Canvas 上方 -->
         <div id="unity-loading-bar">
